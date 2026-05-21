@@ -7,6 +7,8 @@ This repo hosts two version of this project:
 
 - V2 has most components in SMD form. The sync composition circuit is more robust (based on XOR logic) and level shifting (dedicated buffer).
 
+These two versions share the same code.
+
 In the followings details about V2.
 
 
