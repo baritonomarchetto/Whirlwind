@@ -9,7 +9,7 @@ This repo hosts two version of this project:
 
 **These two versions share the same firmware.**
 
-What about V2? It has been designed, but never realized. It was similar to V1, but with XOR sync composition circuit.
+*What about V2? It has been designed, but never realized. It was similar to V1, but with XOR sync composition circuit.*
 
 
 
