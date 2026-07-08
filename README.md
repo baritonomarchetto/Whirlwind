@@ -7,7 +7,7 @@ This repo hosts two version of this project:
 
 - V3 has most components in SMD form. The sync composition circuit is more robust (based on XOR logic) and level shifting done the pro way (dedicated buffer).
 
-These two versions share the same code.
+**These two versions share the same firmware.**
 
 What about V2? It has been designed, but never realized. It was similar to V1, but with XOR sync composition circuit.
 
