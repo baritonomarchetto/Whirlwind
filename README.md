@@ -136,6 +136,8 @@ All input-to-key mappings are stored in flash memory, saving precious RAM. Each 
 
 Many thanks goes to [JLCPCB](https://jlcpcb.com/IAT) for sponsoring PCB manufacturing and SMD assembly for this project. It would have never gone this far without their material help.
 
+<img width="2400" height="1800" alt="IMG_20260707_101525" src="https://github.com/user-attachments/assets/809425aa-4c8d-4cb2-9bd6-c810cec9ee39" />
+
 JLCPCB is a high-tech manufacturer specialized in the production of high-reliable and cost-effective PCBs. They offer a flexible PCB assembly service with a huge library of more than 700.000 components in stock at today. This project made use of the service and everything went smooth and clean.
 
 3D printing is part of their portfolio of services so one could create a full finished product, all in one place (note to self: start learning how to create 3D parts!).
