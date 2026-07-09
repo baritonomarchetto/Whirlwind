@@ -19,10 +19,10 @@ This repo hosts two version of this project:
 - Open firmware
 - Joystick and keyboard emulation (composite-HID device)
 - CRT protection from out-of-spec sync frequencies
-- Built-in XOR sync composition circuit (V3 only)
+- Built-in XOR sync composition circuit (V3 only, AND on V1)
 - Built-in video amplification circuit
 - Built-in audio amplifier (mono)
-- built-in voltage buffering and shifting (V3 only)
+- built-in voltage buffering and shifting (V3 only, voltage divider in V1)
 - Extended JAMMA pinout (2 players, up to 6 buttons per player)
     
 The main circuit revision since V1 is the sync composition and monitoring one. Where I first used a simple AND circuit made of one diode and a resistor to sum horizontal and vertical sync signals, I have now adopted a more robust integrated XOR gate.
