@@ -11,6 +11,8 @@ This repo hosts two version of this project:
 
 *What about V2? It has been designed, but never realized. It was similar to V1, but with XOR sync composition circuit.*
 
+<img width="2400" height="1800" alt="IMG_20260707_122042" src="https://github.com/user-attachments/assets/f5aff7a8-e781-43d0-a0c7-c6322f132001" />
+
 # Main Features
 
 - Based on RP2040 microcontroller (cheap, fast and readily available)
@@ -33,6 +35,8 @@ Please notice: this board cannot force the VGA video signal to CGA or EGA resolu
 
 # Schematics and Circuits Description
 
+<img width="2400" height="1052" alt="whirlwind_block_diagram" src="https://github.com/user-attachments/assets/20dd4698-e5f8-409a-9c61-7140d5b91553" />
+
 ## Microcontroller Board
 Raspberry Pi Pico (30 pin variant clone) is the brain of the project. It's in charge of:
 
@@ -51,7 +55,7 @@ The gain is internally set to 20, which is more than enought for our use.
 
 The volume is adjusted with a 10K on-board trimmer in voltage divider configuration.
 
-The circuit is nothing particularly elaborate, with very low part count. It's mostly the one reported in the datasheet, with bass bost values set by ear.
+The circuit is nothing particularly elaborate, with very low part count. It's mostly the one reported in the [datasheet](https://www.ti.com/lit/ds/symlink/lm386.pdf), with bass bost values set by ear.
 
 This amplifier is good enought to drive a classic 3 W, 8 ohms speaker (those commonly installed in arcade cabinets), but will fry if you try to juice a lower impedance (i.e. 4 ohms) or higher power (i.e. 5 W) speaker.
 
@@ -87,3 +91,55 @@ The audio amplifier circuit is juiced by +12V coming from the cabinet power supp
 The voltage lowener on the sync line is powered @ 3.3V by the Pi Pico built-in voltage regulator.
 
 The video amplifier can be powered @ 3.3V or 5V. Powering at 5V gives more room before video artifacts start, so you name the obvious choice.
+
+# To JAMMA or Not to JAMMA...
+
+<img width="758" height="850" alt="pinout" src="https://github.com/user-attachments/assets/18cce7af-93b7-4a2e-a8ea-cc56b9bb4630" />
+
+In the previous Whirlwind version I adopted a so called "JAMMA+" wiring. In this wiring players buttons are up to 5 each. We are all aware that one of the best coin-op games ever makes use of 6 (Street Fighter II anyone?) and my first solution was to make them available on screw connectors.
+
+In this new version screw connectors are still there (there was the space, so...), but I have also directly wired P1 and P2 buttons 6 to the harness, in positions 27/aa. These are ground lines in jamma harness, so a simple modification to the harness is in the need. Just solder all cables going to pins 27/aa to 28/bb (ground) and P1/P2 button 6 to 27/aa.
+
+After this wiring modification the harness is still JAMMA compatible ;)
+
+Hey, my cabinet has 2 buttons always pressed now!
+
+That's because in this interface pins "27" and "aa" are used as button pins instead of ground. If you have such issue and your cabinet has 6 buttons per player, you need to make the simple modification I described some line ago.
+
+# The Firmware
+
+Having an open firmware gives the user the possibility to finely tune the interface behaviour.
+
+In example, the "simplest" (or should I say "more direct") way to handle inputs is a straight emulation of the HID of interest. Being it a keyboard, a gamepad or a mixed peripheral, turning your microcontrollor board into a HID is a very effective way to make good use of this interface. Another approach is the use of a software gamepad emulator in between our interface and games/emulator.
+
+The first approach is perfect if you have to manage inputs only (like in this case), but could be limiting if outputs have to be considered.
+
+This firmware transforms a Raspberry Pi Pico into a fully-featured PC-to-JAMMA interface, bridging arcade cabinet controls with a PC via USB while simultaneously managing video synchronization for CRT monitors.
+
+It makes good use of both RP2040 cores, dedicating the first one to main control loop handling (debouncing inputs, managing the shift state machine, and sending USB HID commands), the second one to video sync monitor tasks, continuously sampling the horizontal sync (H-sync) signal without interfering with input responsiveness.
+
+The firmware handles all 26 physical inputs (joystick directions, action buttons, coin slots, service, and test switches) using internal pull-up resistors, by emulating a multi-HID device (keyboard and gamepad).
+
+Implements a non-blocking 40 ms debounce filter on every input, ensuring clean and reliable button detection.
+
+USB commands are sent only on state changes to minimize bus traffic.
+
+Player 1 START button acts as a modifier key, giveing menu diving options to the user: a short press (< 2 seconds) sends a standard START pulse on release. Long press (≥ 2 seconds) activates SHIFT mode while held. In this mode, all other buttons send their shifted (alternate) keycodes (e.g., ESC, TAB, TILDE) instead of their normal values.
+
+The firmware simultaneously emulates both a USB joystick and a USB keyboard. Direct inputs Joystick codes (1–32) are sent thanks to [Matthew Heironimus Joystick library](https://github.com/mheironimus/arduinojoysticklibrary). Keyboard ASCII codes (> 32) are sent via the Arduino Keyboard library
+
+The code actively protects the display from out-of-range signals by measuring the H-sync pulse period. If the detected frequency matches the safe 15 kHz range, the video signal is enabled (DisablePin goes LOW, visual feedback LED turns ON). Otherwise, the video output is disabled to protect the monitor from damage. This feature can be entirely disabled via the SYNC_MONITOR_ACTIVE macro if not needed.
+
+All input-to-key mappings are stored in flash memory, saving precious RAM. Each entry defines the physical GPIO pin and HID codes (normal and shifted). This design allows easy customization of the button layout without rewriting the core logic.
+
+# Acknowledgments
+
+Many thanks goes to [JLCPCB](https://jlcpcb.com/IAT) for sponsoring PCB manufacturing and SMD assembly for this project. It would have never gone this far without their material help.
+
+JLCPCB is a high-tech manufacturer specialized in the production of high-reliable and cost-effective PCBs. They offer a flexible PCB assembly service with a huge library of more than 700.000 components in stock at today. This project made use of the service and everything went smooth and clean.
+
+3D printing is part of their portfolio of services so one could create a full finished product, all in one place (note to self: start learning how to create 3D parts!).
+
+What about [nano-coated stencils](https://jlcpcb.com/resources/nano-coated-stencil) for your SMD projects? You can take advantage of a coupon and test it at reduced price in these days.
+
+By registering at JLCPCB site via [THIS LINK](https://jlcpcb.com/IAT) (affiliated link) you will receive a series of coupons for your orders. Registering costs nothing, so it could be the right opportunity to give their service a due try ;)
